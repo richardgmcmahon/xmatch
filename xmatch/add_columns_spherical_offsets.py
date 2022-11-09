@@ -132,7 +132,7 @@ def add_columns_spherical_offsets(table=None,
             plt.ylim(plot_ddecrange)
         plt.grid()
         plt.legend()
-        plotid()
+        #plotid()
 
         dra_mean = np.mean(dra.arcsec)
         dra_median = np.median(dra.arcsec)

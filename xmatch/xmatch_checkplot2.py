@@ -28,7 +28,7 @@ def xmatch_checkplot2(ra1, dec1,
 
     #try:
     #    from mk_timestamp import mk_timestamp
-    from plotid import plotid
+    #from plotid import plotid
 
 
     now = time.localtime(time.time())

@@ -393,7 +393,10 @@ if __name__ == '__main__':
     plt.ylabel('Frequency per bin')
     plt.legend()
 
-    plotid()
+    try:
+        plotid()
+    except:
+        pass
 
     if savefig:
         plotfile = prefix + '_dra_ddec.png'

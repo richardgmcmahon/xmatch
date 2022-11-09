@@ -48,7 +48,7 @@ def xmatch_groups(table1=None, table2=None,
     from astropy import units as u
     from astropy.stats import mad_std, median_absolute_deviation
 
-    from librgm.plotid import plotid
+    #from plotid import plotid
 
     print('__file__:', __file__)
     print('__name__:', __name__)
@@ -140,7 +140,7 @@ def xmatch_groups(table1=None, table2=None,
     plt.xlabel('Group size')
     plt.ylabel('Frequency')
     plt.legend()
-    plotid()
+    #plotid()
     plt.show()
 
     idxmatch2_unique, index, counts = np.unique(
@@ -156,7 +156,7 @@ def xmatch_groups(table1=None, table2=None,
         plt.title(plot_title)
     plt.xlabel('Group size')
     plt.ylabel('Frequency')
-    plotid()
+    #plotid()
     plt.legend()
     plt.show()
 

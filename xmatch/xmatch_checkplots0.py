@@ -23,7 +23,7 @@ def xmatch_checkplots0(ra1, dec1,
     from astropy.coordinates import SkyCoord
     from astropy import units as u
 
-    from librgm.plotid import plotid
+    #from plotid import plotid
 
     now = time.localtime(time.time())
     datestamp = time.strftime("%Y%m%d", now)
@@ -133,7 +133,7 @@ def xmatch_checkplots0(ra1, dec1,
 
     # make room for the plotid on right edge
     fig.subplots_adjust(right=0.95)
-    plotid()
+    #plotid()
 
     if plotfile != None:
         print('Saving plotfile:', plotfile)
