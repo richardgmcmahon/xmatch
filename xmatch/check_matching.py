@@ -41,7 +41,7 @@ import matplotlib.pyplot as plt
 from matplotlib import rc
 from matplotlib.ticker import NullFormatter
 
-from plotid import plotid
+#from plotid import plotid
 
 # could be superseded by astropy.stats.mad_std
 def mad_med(data, axis = None):
@@ -287,7 +287,7 @@ def check_matches(files, cols,
     fig.tight_layout()
     fig.subplots_adjust(top=0.88)
 
-    plotid()
+    #plotid()
 
     if ('save' in keyword_parameter):
         path_to_save = str(keyword_parameter['save'])
