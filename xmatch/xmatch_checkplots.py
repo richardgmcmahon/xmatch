@@ -1,79 +1,99 @@
-from __future__ import (division, print_function)
+def xmatch_checkplots(table1=None,
+                      table2=None,
+                      colnames_radec1=['ra', 'dec'],
+                      colnames_radec2=['ra', 'dec'],
+                      units_radec1=['degree', 'degree'],
+                      units_radec2=['degree', 'degree'],
+                      plotfile_label=None,
+                      plotfile_prefix=None,
+                      suptitle=None,
+                      title=None,
+                      rmax=10.0,
+                      rmax2=None,
+                      showplot=True,
+                      saveplot=True,
+                      datestamp=False,
+                      verbose=False,
+                      debug=False):
+    """
+    RA, Dec crossmatch validation plots
 
+    Docstring follows the Pandas convention
+    https://pandas.pydata.org/docs/development/contributing_docstring.html
+    which is based on: https://numpydoc.readthedocs.io/en/latest/format.html
 
-def xmatch_checkplots(table1=None, idxmatch1=None,
-                      table2=None, idxmatch2=None,
-                          colnames_radec1=['ra', 'dec'],
-                          colnames_radec2=['ra', 'dec'],
-                          units_radec1=['degree', 'degree'],
-                          units_radec2=['degree', 'degree'],
-                          showplot=True,
-                          plotfile_label=None,
-                          suptitle=None,
-                          rmax=10.0, rmax2=None,
-                          debug=False,
-                          verbose=False):
+    Parameters
+    ----------
+    num1 : int
+        First number to add.
+    num2 : int
+        Second number to add.
+
+    Returns
+    -------
+    int
+        The sum of ``num1`` and ``num2``.
+
+    See Also
+    --------
+    subtract : Subtract one integer from another.
+
+    Examples
+    --------
+    >>> add(2, 2)
+    4
+    >>> add(25, 0)
+    25
+    >>> add(10, -10)
+    0
     """
 
-    BEWARE: work in progress
+    from xmatch import xmatch_checkplot1
+    from xmatch import xmatch_checkplot2
 
-    """
-    import numpy as np
+    ra1 = table1[colnames_radec1[0]]
+    dec1 = table1[colnames_radec1[1]]
 
-    from xmatch import xmatch_checkplot
-    from xmatch import xmatch_checkplot0
-
-
-    if suptitle is None:
-        suptitle = ''
+    ra2 = table2[colnames_radec2[0]]
+    dec2 = table2[colnames_radec2[1]]
 
     if plotfile_label is None:
         plotfile_label = ''
 
-    ra1 = table1[colnames_radec1[0]]
-    dec1 = table1[colnames_radec1[1]]
-    if units_radec1[0].find('rad') >= 0:
-        ra1 = np.rad2deg(table1[colnames_radec1[0]])
-    if units_radec1[1].find('rad') >= 0:
-       dec1 = np.rad2deg(table1[colnames_radec1[1]])
+    if plotfile_prefix is None:
+        plotfile_prefix = ''
 
-
-    ra2 = table2[colnames_radec2[0]]
-    dec2 = table2[colnames_radec2[1]]
-    if units_radec2[0].find('rad') >= 0:
-        ra2 = np.rad2deg(table2[colnames_radec2[0]])
-    if units_radec2[1].find('rad') >= 0:
-       dec2 = np.rad2deg(table2[colnames_radec2[1]])
+    if plotfile_prefix is not None:
+        plotfile_prefix = plotfile_prefix + '_'
 
     # suptitle = plotfile_label + 'nthN:' + str(nthneighbor)
     # suptitle = plotfile_label
-    plotfile = 'xmatch_cat' + plotfile_label + '_a_checkplot.png'
+    plotfile = (plotfile_prefix + 'xmatch_' + plotfile_label +
+                '_checkplot_1.png')
 
-    if idxmatch1 is None:
-        ra1_xmatch = ra1
-        dec1_xmatch = dec1
-    if idxmatch1 is not None:
-        ra1_xmatch = ra1[idxmatch1]
-        dec1_xmatch = dec1[idxmatch1]
-
-    ra2_xmatch = ra2[idxmatch2]
-    dec2_xmatch = dec2[idxmatch2]
-
-    xmatch_checkplot(
-        ra1_xmatch, dec1_xmatch,
-        ra2_xmatch, dec2_xmatch,
+    # forked from Sophie Reed
+    xmatch_checkplot1(
+        ra1, dec1,
+        ra2, dec2,
         width=rmax,
         gtype='square',
-        saveplot=True,
+        showplot=showplot,
+        saveplot=saveplot,
         plotfile=plotfile,
         suptitle=suptitle)
 
-    plotfile = 'xmatch_cat' + plotfile_label + '_b_checkplot0.png'
-    xmatch_checkplot0(
-                  ra1, dec1, ra2_xmatch, dec2_xmatch,
-                  width=10.0,
+    plotfile = (plotfile_prefix + 'xmatch_' + plotfile_label +
+                '_checkplot_2.png')
+
+    # forked from Chris Desira
+    xmatch_checkplot2(
+                  ra1, dec1,
+                  ra2, dec2,
+                  width=rmax,
+                  binsize=rmax/100,
                   gtype='square',
-                  saveplot=True,
+                  saveplot=saveplot,
+                  showplot=showplot,
                   plotfile=plotfile,
                   suptitle=suptitle)
 

@@ -2,8 +2,9 @@ def xmatch_checkplot2(ra1, dec1,
                       ra2, dec2,
                       width=10.0,
                       binsize=0.1,
-                      saveplot=True,
                       markersize=1.0,
+                      showplot=True,
+                      saveplot=True,
                       plotfile='',
                       plotfile_prefix=None,
                       suptitle=None,
@@ -69,11 +70,19 @@ def xmatch_checkplot2(ra1, dec1,
     ddec = ddec.arcsecond
     dr = dr.arcsecond
 
+    rmax = width
+
     itest = (np.abs(dra) < rmax) & (np.abs(ddec) < rmax)
 
-    dra = dra[itest]
-    ddec = ddec[itest]
-    dr = dr[itest]
+    itest_dr = np.where(dr < rmax)
+    itest_dradec = ((dra > -1.0 * width) &
+                    (dra < width) &
+                    (ddec > -1.0 * width) &
+                    (ddec < width))
+
+    dra = dra[itest_dradec]
+    ddec = ddec[itest_dradec]
+    dr = dr[itest_dr]
 
     dr_median = np.median(dr)
     dr_ndata = len(dr)
@@ -130,14 +139,14 @@ def xmatch_checkplot2(ra1, dec1,
     s1 = 'xmatchs: %i' % ndata
     ax2.annotate(s1,(0.45,0.95) , xycoords = 'axes fraction',size=8)
 
-    s2 = 'dra Median = %.4f' % dra_median
+    s2 = 'dRA Median = %.4f' % dra_median
     ax2.annotate(s2,(0.05,0.90) , xycoords = 'axes fraction',size=8)
-    s3 = 'dra sigma_MAD = %.4f' % dra_mad_std
+    s3 = 'dRA sigma_MAD = %.4f' % dra_mad_std
     ax2.annotate(s3,(0.55,0.90) , xycoords = 'axes fraction',size=8)
 
-    s2 = 'dra Median = %.4f' % ddec_median
+    s2 = 'dDec Median = %.4f' % ddec_median
     ax2.annotate(s2,(0.05,0.85) , xycoords = 'axes fraction',size=8)
-    s3 = 'dra sigma_MAD = %.4f' % ddec_mad_std
+    s3 = 'dDec sigma_MAD = %.4f' % ddec_mad_std
     ax2.annotate(s3,(0.55,0.85) , xycoords = 'axes fraction',size=8)
 
 
@@ -159,6 +168,7 @@ def xmatch_checkplot2(ra1, dec1,
         path_to_save = str(kwargs['save'])
         plt.savefig(path_to_save, dpi=150)
     else:
-        plt.show()
+        if showplot:
+            plt.show()
 
     return

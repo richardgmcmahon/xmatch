@@ -16,13 +16,15 @@ from astropy.stats import mad_std
 #from librgm import stats
 
 
-def xmatch_checkplot1(ra1, dec1, ra2, dec2,
+def xmatch_checkplot1(ra1, dec1,
+                      ra2, dec2,
                       figsize = (7.0, 7.0),
                       width=10.0,
                       gtype="all",
                       add_plotid=True,
                       prefix=None,
                       saveplot=True,
+                      showplot=True,
                       plotfile=None,
                       plotfile_prefix=None,
                       title=None,
@@ -91,10 +93,20 @@ def xmatch_checkplot1(ra1, dec1, ra2, dec2,
     ddec = ddec.arcsecond
     dr = dr.arcsecond
 
-    itest_dr = np.where(dr < rmax)
-    itest_dradec = np.where(dr < rmax * np.sqrt(2.0))
+    print('dRA range:', np.min(dra), np.max(dra))
+    print('dDec range:', np.min(ddec), np.max(ddec))
+    print('dR range:', np.min(dr), np.max(dr))
 
-    print('Number within match radius:', len(itest), len(dr[itest]), rmax)
+    # radial cicular limits and square RA, Dec limits
+    itest_dr = np.where(dr < rmax)
+    itest_dradec = ((dra > -1.0 * width) &
+                    (dra < width) &
+                    (ddec > -1.0 * width) &
+                    (ddec < width))
+
+    print('Number within match radius:', len(itest_dr),
+          len(dr[itest_dr]), rmax)
+
     ndata_halfrmax = len(dr[np.where(dr < (rmax*0.5))])
     ndata_rmax = len(dr[np.where(dr < rmax)])
     ndata_2rmax = len(dr[np.where(dr < (2*rmax))])
@@ -134,8 +146,8 @@ def xmatch_checkplot1(ra1, dec1, ra2, dec2,
     print("dRA range:", np.min(dra), np.max(dra))
     print("dDec range:", np.min(ddec), np.max(ddec))
 
-    xlimits = np.asarray([-1.0*width, width])
-    ylimits = np.asarray([-1.0*width, width])
+    xlimits = np.asarray([-1.0 * width, width])
+    ylimits = np.asarray([-1.0 * width, width])
     limits = np.asarray([xlimits, ylimits])
     print(xlimits[0], xlimits[1])
     print(dra.dtype)
@@ -195,7 +207,7 @@ def xmatch_checkplot1(ra1, dec1, ra2, dec2,
     # Delta Dec
     if suptitle is None:
         fig.suptitle("Errors in matching: " +
-                     suptitle + ': ' + str(ndata), fontsize='small')
+                     str(ndata), fontsize='small')
 
     if suptitle is not None:
         fig.suptitle(suptitle + ': ' + str(ndata), fontsize='small')
@@ -259,6 +271,7 @@ def xmatch_checkplot1(ra1, dec1, ra2, dec2,
         print('Saving: ', plotfile)
         plt.savefig(plotfile)
 
-    plt.show()
+    if showplot:
+        plt.show()
 
     return RA_med, DEC_med

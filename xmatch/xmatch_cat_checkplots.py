@@ -10,6 +10,7 @@ def xmatch_cat_checkplots(table1=None,
                           rmax=10.0,
                           rmax2=None,
                           debug=False,
+                          plotfile_prefix=None,
                           verbose=False):
 
     from xmatch import xmatch_checkplot1
@@ -24,9 +25,16 @@ def xmatch_cat_checkplots(table1=None,
     if plotfile_label is None:
         plotfile_label = ''
 
+    if plotfile_prefix is None:
+        plotfile_prefix = ''
+
+    if plotfile_prefix is not None:
+        plotfile_prefix = plotfile_prefix + '_'
+
     # suptitle = plotfile_label + 'nthN:' + str(nthneighbor)
     # suptitle = plotfile_label
-    plotfile = 'xmatch_cat' + plotfile_label + '_checkplot_1.png'
+    plotfile = (plotfile_prefix + 'xmatch_cat' + plotfile_label +
+                '_checkplot_1.png')
 
     # forked from Sophie Reed
     xmatch_checkplot1(
@@ -38,7 +46,8 @@ def xmatch_cat_checkplots(table1=None,
         plotfile=plotfile,
         suptitle=suptitle)
 
-    plotfile = 'xmatch_cat' + plotfile_label + '_checkplot_2.png'
+    plotfile = (plotfile_prefix + 'xmatch_cat' + plotfile_label +
+                '_checkplot_2.png')
 
     # forked from Chris Desira
     xmatch_checkplot2(
