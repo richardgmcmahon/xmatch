@@ -1,6 +1,8 @@
 from __future__ import (division, print_function)
 
-def xmatch_cat(table1=None, table2=None,
+def xmatch_cat(ra1=None, dec1=None,
+               ra2=None, dec2=None,
+               table1=None, table2=None,
                radec1=None, radec2=None,
                nthneighbor=None,
                multimatch=False,
@@ -16,7 +18,19 @@ def xmatch_cat(table1=None, table2=None,
                method=False):
     """RA, Dec nearest xmatch for two lists; returns pointers
 
+    returns
+
+    if not multimatch:
+        return idx2, dr, dra, ddec
+
+    if multimatch:
+        return (idx1, idx2), dr, dra, ddec
+
+
     nearest match
+
+    I am not sure why I adopted the zipped option; maybe it is for speed
+    when using astropy
 
     input can be an astropy table or zipped radec as a list
 
@@ -55,6 +69,7 @@ def xmatch_cat(table1=None, table2=None,
     if verbose or debug:
         print('__file__:', __file__)
         print('__name__:', __name__)
+
     try:
         if 'filename' in table1.meta:
             print('table1.filename:', table1.meta['filename'])
@@ -86,16 +101,20 @@ def xmatch_cat(table1=None, table2=None,
     if nthneighbor is None:
         nthneighbor = 1
 
-    ra1 = table1[colnames_radec1[0]]
-    dec1 = table1[colnames_radec1[1]]
+    if ra1 is None:
+        ra1 = table1[colnames_radec1[0]]
+    if dec1 is None:
+        dec1 = table1[colnames_radec1[1]]
     if verbose or debug:
         print('table1: ra; column name, units:',
               colnames_radec1[0], table1[colnames_radec1[0]].unit)
         print('table1: dec: column name, units:',
               colnames_radec1[1], table1[colnames_radec1[1]].unit)
 
-    ra2 = table2[colnames_radec2[0]]
-    dec2 = table2[colnames_radec2[1]]
+    if ra2 is None:
+        ra2 = table2[colnames_radec2[0]]
+    if dec is None:
+        dec2 = table2[colnames_radec2[1]]
     if verbose or debug:
         print('table2: ', colnames_radec2[0], table2[colnames_radec2[0]].unit)
         print('table2: ', colnames_radec2[1], table2[colnames_radec2[1]].unit)

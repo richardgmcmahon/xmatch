@@ -1,4 +1,7 @@
-def xmatch_checkplots(table1=None,
+def xmatch_checkplots(ra1=None, dec1=None,
+                      ra2=None, dec2=None,
+                      dra=None, ddec=None, dr=None,
+                      table1=None,
                       table2=None,
                       colnames_radec1=['ra', 'dec'],
                       colnames_radec2=['ra', 'dec'],
@@ -16,7 +19,8 @@ def xmatch_checkplots(table1=None,
                       verbose=False,
                       debug=False):
     """
-    RA, Dec crossmatch validation plots
+    RA, Dec crossmatch validation plots based on code from Chris Desira and
+    Sophie Reed
 
     Docstring follows the Pandas convention
     https://pandas.pydata.org/docs/development/contributing_docstring.html
@@ -24,10 +28,17 @@ def xmatch_checkplots(table1=None,
 
     Parameters
     ----------
-    num1 : int
-        First number to add.
-    num2 : int
-        Second number to add.
+    ra1: real
+        Right Ascension or Longitude in degrees for catalogue or table #1
+    dec1: real
+        Declination or Latitude in degrees for catalogue or table #1
+
+    ra2: real
+        Right Ascension or Longitude in degrees for catalogue or table #1
+    dec2: real
+        Declination or Latitude in degrees for catalogue or table #1
+
+    Astropy units are supported so radians can be passed transparently
 
     Returns
     -------
@@ -51,11 +62,16 @@ def xmatch_checkplots(table1=None,
     from xmatch import xmatch_checkplot1
     from xmatch import xmatch_checkplot2
 
-    ra1 = table1[colnames_radec1[0]]
-    dec1 = table1[colnames_radec1[1]]
+    if ra1 is None:
+        ra1 = table1[colnames_radec1[0]]
+    if dec1 is None:
+        dec1 = table1[colnames_radec1[1]]
 
-    ra2 = table2[colnames_radec2[0]]
-    dec2 = table2[colnames_radec2[1]]
+    if ra2 is None:
+        ra2 = table2[colnames_radec2[0]]
+    if dec2 is None:
+        dec2 = table2[colnames_radec2[1]]
+
 
     if plotfile_label is None:
         plotfile_label = ''

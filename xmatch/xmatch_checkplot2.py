@@ -11,8 +11,8 @@ def xmatch_checkplot2(ra1, dec1,
                       **kwargs):
 
     """
-    only use suptitle since title near start before subplots causes alignment
-    problems
+    only use suptitle since title near start
+    before subplots causes alignment problems
 
     """
 
@@ -99,6 +99,11 @@ def xmatch_checkplot2(ra1, dec1,
     ddec_mad = stats.median_absolute_deviation(ddec)
     ddec_mad_std = stats.mad_std(ddec)
 
+    # error on mean/median
+    dra_median_error = dra_mad_std / np.sqrt(len(dr))
+    ddec_median_error = ddec_mad_std / np.sqrt(len(dr))
+
+
     fig = plt.figure(1, figsize=(10, 5))
     plt.suptitle(suptitle + ': '+ str(ndata_all))
     ax1=fig.add_subplot(1,2,1)
@@ -141,13 +146,19 @@ def xmatch_checkplot2(ra1, dec1,
 
     s2 = 'dRA Median = %.4f' % dra_median
     ax2.annotate(s2,(0.05,0.90) , xycoords = 'axes fraction',size=8)
-    s3 = 'dRA sigma_MAD = %.4f' % dra_mad_std
+    s3 = 'dDec Median = %.4f' % ddec_median
     ax2.annotate(s3,(0.55,0.90) , xycoords = 'axes fraction',size=8)
 
-    s2 = 'dDec Median = %.4f' % ddec_median
+    s2 = 'dRA sigma_MAD = %.4f' % dra_mad_std
     ax2.annotate(s2,(0.05,0.85) , xycoords = 'axes fraction',size=8)
     s3 = 'dDec sigma_MAD = %.4f' % ddec_mad_std
     ax2.annotate(s3,(0.55,0.85) , xycoords = 'axes fraction',size=8)
+
+
+    s2 = 'dRA Median err = %.4f' % dra_median_error
+    ax2.annotate(s2,(0.05,0.80) , xycoords = 'axes fraction',size=8)
+    s3 = 'dDec Median err = %.4f' % ddec_median_error
+    ax2.annotate(s3,(0.55,0.80) , xycoords = 'axes fraction',size=8)
 
 
     fig.tight_layout()

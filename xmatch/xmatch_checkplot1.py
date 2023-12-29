@@ -8,13 +8,6 @@ from astropy import units as u
 from astropy.coordinates import SkyCoord
 from astropy.stats import mad_std
 
-#sys.path.append("/home/rgm/soft/python/lib/")
-#from librgm.plotid import plotid
-#from librgm.mk_timestamp import mk_timestamp
-#from librgm.plot_radec import plot_radec
-#from librgm.xmatch_checkplot import xmatch_checkplot
-#from librgm import stats
-
 
 def xmatch_checkplot1(ra1, dec1,
                       ra2, dec2,
@@ -29,6 +22,7 @@ def xmatch_checkplot1(ra1, dec1,
                       plotfile_prefix=None,
                       title=None,
                       suptitle=None):
+
     """ Makes checkplot for catalogue xmatch results
 
     Forked from Sophie Reed's version on 20160319
@@ -71,6 +65,7 @@ def xmatch_checkplot1(ra1, dec1,
     print(function_name + '.prefix:  ', plotfile_prefix)
     print(len(ra1), len(ra2))
 
+    print('Plot width:', width)
     ndata = len(ra1)
     rmax = width
 
@@ -129,19 +124,24 @@ def xmatch_checkplot1(ra1, dec1,
 
     dr = dr[itest_dr]
 
-    RA_med = np.median(dra)
-    DEC_med = np.median(ddec)
-    RA_mad_std = mad_std(dra)
-    DEC_mad_std = mad_std(ddec)
+    ra_med = np.median(dra)
+    dec_med = np.median(ddec)
+    ra_mad_std = mad_std(dra)
+    dec_mad_std = mad_std(ddec)
+
+    # error on mean/median
+    ra_median_error = ra_mad_std / math.sqrt(len(dr))
+    dec_median_error = dec_mad_std / math.sqrt(len(dr))
+
 
     print("Number of matchs", len(dra))
-    print("RA median offset", RA_med)
-    print("Dec median offset", DEC_mad_std)
-    print("RA Sigma(MAD)", RA_mad_std)
-    print("Dec Sigma(MAD)", DEC_mad_std)
+    print("RA median offset", ra_med)
+    print("Dec median offset", dec_mad_std)
+    print("RA Sigma(MAD)", ra_mad_std)
+    print("Dec Sigma(MAD)", dec_mad_std)
 
-    print("RA median error [sqrt(n)]", RA_mad_std / math.sqrt(len(dr)),
-          "Dec median error [sqrt[n]", DEC_mad_std / math.sqrt(len(dr)))
+    print("RA median error [sqrt(n)]", ra_median_error,
+          "Dec median error [sqrt[n]", dec_median_error)
 
     print("dRA range:", np.min(dra), np.max(dra))
     print("dDec range:", np.min(ddec), np.max(ddec))
@@ -197,8 +197,8 @@ def xmatch_checkplot1(ra1, dec1,
     plt.axhline(0.0, linestyle='dashed')
     ax2.set_ylim(-1*width, width)
     ax2.set_xlim(-1*width, width)
-    ax2.set_xlabel('Delta RA /"')
-    ax2.set_ylabel('Delta Dec /"')
+    ax2.set_xlabel('Delta RA "')
+    ax2.set_ylabel('Delta Dec "')
 
 
     #labels1 = ax2.get_xticks()
@@ -206,7 +206,7 @@ def xmatch_checkplot1(ra1, dec1,
 
     # Delta Dec
     if suptitle is None:
-        fig.suptitle("Errors in matching: " +
+        fig.suptitle("Number of sources in XMatch: " +
                      str(ndata), fontsize='small')
 
     if suptitle is not None:
@@ -230,21 +230,29 @@ def xmatch_checkplot1(ra1, dec1,
     fontsize = 'small'
     fontsize = 'medium'
     ax4.annotate("Number of matchs: " +
-                 str(len(dra)), xy=(x0, 0.1), size=fontsize)
-    ax4.annotate("Median RA offset: {0:.4f}".format(RA_med) +
+                 str(len(dra)), xy=(x0, 0.0), size=fontsize)
+    ax4.annotate("No. of sources(1): " +
+                 str(len(ra1)),
+                 xy=(x0, 0.20), size=fontsize)
+    ax4.annotate("No. of sources(2): " +
+                 str(len(ra2)),
+                 xy=(x0, 0.10), size=fontsize)
+
+
+    ax4.annotate("Median dRA: {0:.4f}".format(ra_med) +
                  '"', xy=(x0, 0.90), size=fontsize)
-    ax4.annotate("Median DEC offset: {0:.4f}".format(DEC_med) +
-                 '"', xy=(x0, 0.8), size=fontsize)
-    ax4.annotate("RA sigma MAD: {0:.4f}".format(RA_mad_std) +
-                 '"', xy=(x0, 0.7), size=fontsize)
-    ax4.annotate("DEC sigma MAD: {0:.4f}".format(DEC_mad_std) +
-                 '"', xy=(x0, 0.6), size=fontsize)
-    ax4.annotate("RA median error: {0:.4f}".
-                 format(RA_mad_std / math.sqrt(len(dr))) + '"',
-                 xy=(x0, 0.5), size=fontsize)
-    ax4.annotate("DEC median error: {0:.4f}".
-                 format(DEC_mad_std / math.sqrt(len(dr))) + '"',
-                 xy=(x0, 0.4), size=fontsize)
+    ax4.annotate("Median dDEC: {0:.4f}".format(dec_med) +
+                 '"', xy=(x0, 0.80), size=fontsize)
+    ax4.annotate("dRA sigma MAD: {0:.4f}".format(ra_mad_std) +
+                 '"', xy=(x0, 0.70), size=fontsize)
+    ax4.annotate("dDEC sigma MAD: {0:.4f}".format(dec_mad_std) +
+                 '"', xy=(x0, 0.60), size=fontsize)
+    ax4.annotate("dRA median error: {0:.4f}".
+                 format(ra_median_error) + '"',
+                 xy=(x0, 0.50), size=fontsize)
+    ax4.annotate("dDEC median error: {0:.4f}".
+                 format(dec_median_error) + '"',
+                 xy=(x0, 0.40), size=fontsize)
 
     ax4.axes.get_xaxis().set_visible(False)
     ax4.axes.get_yaxis().set_visible(False)
@@ -274,4 +282,4 @@ def xmatch_checkplot1(ra1, dec1,
     if showplot:
         plt.show()
 
-    return RA_med, DEC_med
+    return ra_med, dec_med
