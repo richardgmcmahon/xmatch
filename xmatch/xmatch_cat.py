@@ -30,7 +30,7 @@ def xmatch_cat(ra1=None, dec1=None,
     nearest match
 
     I am not sure why I adopted the zipped option; maybe it is for speed
-    when using astropy
+    when using astropy. radec1, radec2 are not currently supported!
 
     input can be an astropy table or zipped radec as a list
 
@@ -113,7 +113,7 @@ def xmatch_cat(ra1=None, dec1=None,
 
     if ra2 is None:
         ra2 = table2[colnames_radec2[0]]
-    if dec is None:
+    if dec2 is None:
         dec2 = table2[colnames_radec2[1]]
     if verbose or debug:
         print('table2: ', colnames_radec2[0], table2[colnames_radec2[0]].unit)
