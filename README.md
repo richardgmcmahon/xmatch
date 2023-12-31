@@ -1,17 +1,42 @@
+TODO
+
+create a Jupyter notebook with tests and demo
+
+To install:
+
+python setup.py install
+
+you can ignore messages like:
+
+(base) rgm@Richards-MacBook-Pro-2020(~/soft/xmatch){1942}> python setup.py install
+running install
+/Users/rgm/anaconda3/lib/python3.11/site-packages/setuptools/_distutils/cmd.py:66: SetuptoolsDeprecationWarning: setup.py install is deprecated.
+!!
+
+********************************************************************************
+Please avoid running ``setup.py`` directly.
+Instead, use pypa/build, pypa/installer or other standards-based tools.
+
+See https://blog.ganssle.io/articles/2021/10/setup-py-deprecated.html for details.
+********************************************************************************
+
+error: [Errno 2] No such file or directory: '/Users/rgm/anaconda3/lib/python3.11/site-packages/astropy-6.0.0.dist-info/METADATA'
+
 
 
 Various high level positional cross matching functions based on astropy
 that are under development.
 
-The goal is to be as easy to use as TOPCAT and STILTS and give comparable results:
+The goal is to be as easy to use as TOPCAT and STILTS and give comparable
+results:
 
 * STILTS: http://www.star.bris.ac.uk/~mbt/stilts/sun256/match.html
 * TOPCAT: http://www.star.bris.ac.uk/~mbt/topcat/sun253/sun253.html
   * http://www.star.bris.ac.uk/~mbt/topcat/sun253/sun253.html#matchCriteria
 
-Note: checkplot# is currently be rationalised. Please be patient
+Note: checkplot# is currently being rationalised. Please be patient
 
-The fucntions take either a ra, dec lists of values in units of degrees
+The functions take either a ra, dec lists of values in units of degrees
 or as astropy table columns with aribitrary units. For astropy tables the
 column names are specified as arguments.
 
