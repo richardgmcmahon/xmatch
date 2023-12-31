@@ -79,13 +79,10 @@ def xmatch_checkplots(ra1=None, dec1=None,
     if plotfile_prefix is None:
         plotfile_prefix = ''
 
-    if plotfile_prefix is not None:
-        plotfile_prefix = plotfile_prefix + '_'
-
     # suptitle = plotfile_label + 'nthN:' + str(nthneighbor)
     # suptitle = plotfile_label
     plotfile = (plotfile_prefix + 'xmatch_' + plotfile_label +
-                '_checkplot_1.png')
+                'checkplot_1.png')
 
     # forked from Sophie Reed
     xmatch_checkplot1(

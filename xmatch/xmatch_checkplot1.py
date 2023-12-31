@@ -11,6 +11,8 @@ from astropy.stats import mad_std
 
 def xmatch_checkplot1(ra1, dec1,
                       ra2, dec2,
+                      units_radec1=['degree', 'degree'],
+                      units_radec2=['degree', 'degree'],
                       figsize = (7.0, 7.0),
                       width=10.0,
                       gtype="all",
@@ -71,8 +73,8 @@ def xmatch_checkplot1(ra1, dec1,
 
     # compute Delta RA and Delta Dec in arcsecs
     # ra, dec assumed in have astropy units of degrees
-    skycoord1 = SkyCoord(ra1, dec1)
-    skycoord2 = SkyCoord(ra2, dec2)
+    skycoord1 = SkyCoord(ra1, dec1, unit=units_radec1)
+    skycoord2 = SkyCoord(ra2, dec2, unit=units_radec2)
     print(skycoord1[0])
     print(skycoord2[0])
 

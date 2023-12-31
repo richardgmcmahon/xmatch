@@ -1,5 +1,7 @@
 def xmatch_checkplot2(ra1, dec1,
                       ra2, dec2,
+                      units_radec1=['degree', 'degree'],
+                      units_radec2=['degree', 'degree'],
                       width=10.0,
                       binsize=0.1,
                       markersize=1.0,
@@ -57,8 +59,8 @@ def xmatch_checkplot2(ra1, dec1,
 
     # compute Delta RA and Delta Dec in arcsecs
     # ra, dec assumed in have astropy units of degrees
-    skycoord1 = SkyCoord(ra1, dec1)
-    skycoord2 = SkyCoord(ra2, dec2)
+    skycoord1 = SkyCoord(ra1, dec1, unit=units_radec1)
+    skycoord2 = SkyCoord(ra2, dec2, unit=units_radec2)
 
     dra, ddec = skycoord1.spherical_offsets_to(skycoord2)
     dr = skycoord1.separation(skycoord2)
