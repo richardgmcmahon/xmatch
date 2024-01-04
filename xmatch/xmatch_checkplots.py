@@ -96,7 +96,7 @@ def xmatch_checkplots(ra1=None, dec1=None,
         suptitle=suptitle)
 
     plotfile = (plotfile_prefix + 'xmatch_' + plotfile_label +
-                '_checkplot_2.png')
+                'checkplot_2.png')
 
     # forked from Chris Desira
     xmatch_checkplot2(

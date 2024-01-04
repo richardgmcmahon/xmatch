@@ -185,14 +185,14 @@ def xmatch_checkplot1(ra1, dec1,
     # Delta RA versus Delta Dec distribution
     ax2 = plt.subplot(gs[2])
     # ax2.plot(xs, ys, "k+")
-    if len(dra) > 100:
+    if len(dra) > 1000:
         plt.hist2d(dra, ddec, bins=100,
                    cmap="binary",
                    norm=LogNorm(),
                    range=limits)
         plt.grid('true')
     else:
-        plt.plot(dra, ddec, "k.", ms=2)
+        plt.plot(dra, ddec, "k.", ms=4)
 
 
     plt.axvline(0.0, linestyle='dashed')
