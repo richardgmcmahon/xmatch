@@ -32,11 +32,13 @@ def xmatch_selfcheck(data=None,
     # make this conditional via exception check
     try:
         from plotid import plotid
-    except ImportErro as errror:
-        print(error.__class__.__name__ + ": " + error.message)
-    except Exception as exception:
-        print(exception, False)
-        print(exception.__class__.__name__ + ": " + exception.message)
+    except:
+        pass
+    #except ImportError as error:
+    #    print(error.__class__.__name__ + ": " + error.message)
+    #except Exception as exception:
+    #    print(exception, False)
+    #    print(exception.__class__.__name__ + ": " + exception.message)
 
     print('__file__', __file__)
     print('__name__', __name__)

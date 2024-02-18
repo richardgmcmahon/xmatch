@@ -20,10 +20,10 @@ def xmatch_checkplot1(ra1, dec1,
                       prefix=None,
                       saveplot=True,
                       showplot=True,
-                      plotfile=None,
-                      plotfile_prefix=None,
                       title=None,
-                      suptitle=None):
+                      suptitle=None,
+                      plotfile=None,
+                      plotfile_prefix=None):
 
     """ Makes checkplot for catalogue xmatch results
 
@@ -86,6 +86,9 @@ def xmatch_checkplot1(ra1, dec1,
     print(ddec[0])
 
     # convert offsets to arc seconds
+    print('dra.unit:', dra.unit)
+    print('ddec.unit:', ddec.unit)
+    print('dr.unit:', dr.unit)
     dra = dra.arcsecond
     ddec = ddec.arcsecond
     dr = dr.arcsecond
@@ -206,14 +209,15 @@ def xmatch_checkplot1(ra1, dec1,
     #labels1 = ax2.get_xticks()
     #ax2.set_xticklabels(labels1, rotation=270)
 
-    # Delta Dec
+    # suptitle covers all all the subplots
     if suptitle is None:
         fig.suptitle("Number of sources in XMatch: " +
                      str(ndata), fontsize='small')
 
     if suptitle is not None:
-        fig.suptitle(suptitle + ': ' + str(ndata), fontsize='small')
+        fig.suptitle(suptitle + ': ' + str(ndata), fontsize='medium')
 
+    # Delta Dec
     ax3 = plt.subplot(gs[3])
     print('limits:', limits)
     ax3.hist(ddec, bins=100, orientation="horizontal", color="r",

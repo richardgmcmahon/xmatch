@@ -4,17 +4,28 @@ def xmatch_cat_checkplots(table1=None,
                           colnames_radec2=['ra', 'dec'],
                           units_radec1=['degree', 'degree'],
                           units_radec2=['degree', 'degree'],
-                          plotfile_label=None,
-                          suptitle=None,
-                          title=None,
                           rmax=10.0,
                           rmax2=None,
-                          debug=False,
+                          plotfile_label=None,
                           plotfile_prefix=None,
+                          suptitle=None,
+                          title=None,
+                          debug=False,
                           verbose=False):
 
     from xmatch import xmatch_checkplot1
     from xmatch import xmatch_checkplot2
+
+    now = time.localtime(time.time())
+    datestamp = time.strftime("%Y%m%d", now)
+    function_name = inspect.stack()[0][3]
+
+    lineno = str(inspect.stack()[0][2])
+    #print(mk_timestamp(), function_name, lineno + ':')
+    print(function_name + '.saveplot:', saveplot)
+    print(function_name + '.plotfile:', plotfile)
+    print(function_name + '.prefix:  ', plotfile_prefix)
+
 
     ra1 = table1[colnames_radec1[0]]
     dec1 = table1[colnames_radec1[1]]
@@ -29,11 +40,11 @@ def xmatch_cat_checkplots(table1=None,
         plotfile_prefix = ''
 
     if plotfile_prefix is not None:
-        plotfile_prefix = plotfile_prefix + '_'
+        plotfile_prefix = plotfile_prefix
 
     # suptitle = plotfile_label + 'nthN:' + str(nthneighbor)
     # suptitle = plotfile_label
-    plotfile = (plotfile_prefix + 'xmatch_cat' + plotfile_label +
+    plotfile = (plotfile_prefix + 'xmatch_cat' +
                 '_checkplot_1.png')
 
     # forked from Sophie Reed
@@ -46,7 +57,7 @@ def xmatch_cat_checkplots(table1=None,
         plotfile=plotfile,
         suptitle=suptitle)
 
-    plotfile = (plotfile_prefix + 'xmatch_cat' + plotfile_label +
+    plotfile = (plotfile_prefix + 'xmatch_cat' +
                 '_checkplot_2.png')
 
     # forked from Chris Desira
