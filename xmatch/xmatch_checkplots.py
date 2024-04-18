@@ -79,6 +79,7 @@ Parameters
     print(timestamp, function_name, lineno + ':')
     print(function_name + '.saveplot:', saveplot)
     print(function_name + '.prefix:  ', plotfile_prefix)
+    print(function_name + '.suffix:  ', plotfile_suffix)
 
     if ra1 is None:
         ra1 = table1[colnames_radec1[0]]
@@ -96,12 +97,14 @@ Parameters
     if plotfile_prefix is None:
         plotfile_prefix = ''
 
-    if plotfile_prefix is not None:
-        plotfile_prefix = plotfile_prefix
-
     # suptitle = plotfile_label + 'nthN:' + str(nthneighbor)
     # suptitle = plotfile_label
-    plotfile = (plotfile_prefix + 'xmatch_checkplot_1.png')
+    plotfile = plotfile_prefix + 'xmatch_checkplot_1.png'
+
+    if plotfile_suffix is not None:
+        plotfile = plotfile_prefix + 'xmatch_checkplot_1_' + /
+         plotfile_suffix + '.png'
+
 
     # forked from Sophie Reed
     title = plotfile_prefix
@@ -118,7 +121,12 @@ Parameters
         suptitle=suptitle,
         showplots=showplots)
 
+
     plotfile = (plotfile_prefix + 'xmatch_checkplot_2.png')
+    if plotfile_suffix is not None:
+        plotfile = plotfile_prefix + 'xmatch_checkplot_2_' + /
+         plotfile_suffix + '.png'
+
 
     # forked from Chris Desira
     xmatch_checkplot2(ra1, dec1,
