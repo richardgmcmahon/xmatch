@@ -10,11 +10,13 @@ def xmatch_checkplots(ra1=None, dec1=None,
                       rmax2=None,
                       plotfile_label=None,
                       plotfile_prefix=None,
+                      plotfile_suffix=None,
                       suptitle=None,
                       title=None,
-                      showplot=True,
+                      showplots=True,
                       saveplot=True,
                       datestamp=False,
+                      hexbin=False,
                       debug=False,
                       verbose=False):
     """ RA, Dec crossmatch validation plots based on code from Chris Desira and
@@ -61,6 +63,7 @@ Parameters
     """
 
     import os
+    import sys
     import time
     import inspect
 
@@ -69,10 +72,11 @@ Parameters
 
     now = time.localtime(time.time())
     datestamp = time.strftime("%Y%m%d", now)
+    timestamp = time.strftime('%Y-%m-%dT%H:%M:%S', time.gmtime())
     function_name = inspect.stack()[0][3]
 
     lineno = str(inspect.stack()[0][2])
-    #print(mk_timestamp(), function_name, lineno + ':')
+    print(timestamp, function_name, lineno + ':')
     print(function_name + '.saveplot:', saveplot)
     print(function_name + '.prefix:  ', plotfile_prefix)
 
@@ -85,7 +89,6 @@ Parameters
         ra2 = table2[colnames_radec2[0]]
     if dec2 is None:
         dec2 = table2[colnames_radec2[1]]
-
 
     if plotfile_label is None:
         plotfile_label = ''
@@ -101,30 +104,32 @@ Parameters
     plotfile = (plotfile_prefix + 'xmatch_checkplot_1.png')
 
     # forked from Sophie Reed
-    title= plotfile_prefix
+    title = plotfile_prefix
     suptitle = plotfile_prefix
     xmatch_checkplot1(
         ra1, dec1,
         ra2, dec2,
         width=rmax,
+        hexbin=hexbin,
         gtype='square',
         saveplot=True,
         plotfile=plotfile,
         title=title,
-        suptitle=suptitle)
+        suptitle=suptitle,
+        showplots=showplots)
 
     plotfile = (plotfile_prefix + 'xmatch_checkplot_2.png')
 
-
     # forked from Chris Desira
-    xmatch_checkplot2(
-                  ra1, dec1,
-                  ra2, dec2,
-                  width=rmax,
-                  binsize=rmax/100,
-                  gtype='square',
-                  saveplot=True,
-                  plotfile=plotfile,
-                  suptitle=suptitle)
+    xmatch_checkplot2(ra1, dec1,
+                      ra2, dec2,
+                      hexbin=hexbin,
+                      width=rmax,
+                      binsize=rmax/100,
+                      gtype='square',
+                      saveplot=True,
+                      plotfile=plotfile,
+                      suptitle=suptitle,
+                      showplots=showplots)
 
     return

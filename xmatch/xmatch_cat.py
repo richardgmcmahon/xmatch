@@ -135,6 +135,8 @@ def xmatch_cat(ra1=None, dec1=None,
     ra2.unit = ra1.unit
     dec2.unit = dec1.unit
 
+    if verbose or debug:
+        print('Convert to SkyCoord', len(ra1), len(ra2))
     skycoord1 = SkyCoord(ra1, dec1, unit=units_radec1, frame='icrs')
     skycoord2 = SkyCoord(ra2, dec2, unit=units_radec2, frame='icrs')
 
@@ -143,6 +145,10 @@ def xmatch_cat(ra1=None, dec1=None,
     # Shape of idx matches the first coordinate array
     idx1 = []
     idx2 = []
+    if verbose or debug:
+        print('method:', method)
+        print('multimatch:', multimatch)
+
     if not method:
         if not multimatch:
             idx2, d2d, d3d = \
@@ -177,6 +183,8 @@ def xmatch_cat(ra1=None, dec1=None,
     #    d3d = d3d[itest]
 
     # compute the separations and
+    if verbose or debug:
+        print('Compute separations')
     if not multimatch:
         separation = skycoord1.separation(skycoord2[idx2])
         dra, ddec = \

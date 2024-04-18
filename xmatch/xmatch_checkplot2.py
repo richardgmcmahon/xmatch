@@ -5,7 +5,7 @@ def xmatch_checkplot2(ra1, dec1,
                       width=10.0,
                       binsize=0.1,
                       markersize=2.0,
-                      showplot=True,
+                      showplots=True,
                       saveplot=True,
                       plotfile='',
                       plotfile_prefix=None,
@@ -181,7 +181,7 @@ def xmatch_checkplot2(ra1, dec1,
         path_to_save = str(kwargs['save'])
         plt.savefig(path_to_save, dpi=150)
     else:
-        if showplot:
+        if showplots:
             plt.show()
 
     return

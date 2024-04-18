@@ -1,5 +1,8 @@
 from __future__ import (division, print_function)
 #  Forked from Sophie Reed's version on 20160319
+
+import os
+import sys
 import time
 
 import numpy as np
@@ -13,13 +16,15 @@ def xmatch_checkplot1(ra1, dec1,
                       ra2, dec2,
                       units_radec1=['degree', 'degree'],
                       units_radec2=['degree', 'degree'],
-                      figsize = (7.0, 7.0),
+                      figsize=(7.0, 7.0),
+                      hexbin=False,
+                      logfrequency=False,
                       width=10.0,
                       gtype="all",
-                      add_plotid=True,
+                      add_plotid=False,
                       prefix=None,
                       saveplot=True,
-                      showplot=True,
+                      showplots=True,
                       title=None,
                       suptitle=None,
                       plotfile=None,
@@ -58,13 +63,15 @@ def xmatch_checkplot1(ra1, dec1,
 
     now = time.localtime(time.time())
     datestamp = time.strftime("%Y%m%d", now)
+    timestamp = time.strftime('%Y-%m-%dT%H:%M:%S', time.gmtime())
     function_name = inspect.stack()[0][3]
 
     lineno = str(inspect.stack()[0][2])
-    #print(mk_timestamp(), function_name, lineno + ':')
+    print(timestamp, function_name, lineno + ':')
     print(function_name + '.saveplot:', saveplot)
     print(function_name + '.plotfile:', plotfile)
     print(function_name + '.prefix:  ', plotfile_prefix)
+
     print(len(ra1), len(ra2))
 
     print('Plot width:', width)
@@ -89,6 +96,7 @@ def xmatch_checkplot1(ra1, dec1,
     print('dra.unit:', dra.unit)
     print('ddec.unit:', ddec.unit)
     print('dr.unit:', dr.unit)
+
     dra = dra.arcsecond
     ddec = ddec.arcsecond
     dr = dr.arcsecond
@@ -138,7 +146,6 @@ def xmatch_checkplot1(ra1, dec1,
     ra_median_error = ra_mad_std / math.sqrt(len(dr))
     dec_median_error = dec_mad_std / math.sqrt(len(dr))
 
-
     print("Number of matchs", len(dra))
     print("RA median offset", ra_med)
     print("Dec median offset", dec_mad_std)
@@ -178,33 +185,42 @@ def xmatch_checkplot1(ra1, dec1,
 
     # Delta RA Histogram
     ax1 = plt.subplot(gs[0])
-    ax1.hist(dra, bins=100, color="r", range=xlimits)
+    ax1.hist(dra, bins=100,
+             color="r", range=xlimits)
     plt.axvline(0.0, linestyle='dashed')
     ax1.set_xlim(xlimits)
     ax1.axes.get_xaxis().set_visible(False)
     ax1.set_ylabel("Number")
 
-
     # Delta RA versus Delta Dec distribution
     ax2 = plt.subplot(gs[2])
     # ax2.plot(xs, ys, "k+")
     if len(dra) > 1000:
-        plt.hist2d(dra, ddec, bins=100,
-                   cmap="binary",
+        xdata = dra
+        ydata = ddec
+        if not hexbin:
+            cmap = 'cubehelix' # Dave Green
+            # cmap = 'binary'
+            plt.hist2d(xdata, ydata,
+                       bins=100,
+                       cmap=cmap,
                    norm=LogNorm(),
                    range=limits)
-        plt.grid('true')
+            plt.grid('true')
+        if hexbin:
+            plt.hexbin(xdata, ydata,
+                       gridsize=100, bins='log',
+                       cmap='cubehelix', mincnt=1.0)
+
     else:
         plt.plot(dra, ddec, "k.", ms=4)
-
 
     plt.axvline(0.0, linestyle='dashed')
     plt.axhline(0.0, linestyle='dashed')
     ax2.set_ylim(-1*width, width)
     ax2.set_xlim(-1*width, width)
-    ax2.set_xlabel('Delta RA "')
-    ax2.set_ylabel('Delta Dec "')
-
+    ax2.set_xlabel('Delta RA (arcsec)')
+    ax2.set_ylabel('Delta Dec (arcsec')
 
     #labels1 = ax2.get_xticks()
     #ax2.set_xticklabels(labels1, rotation=270)
@@ -230,7 +246,6 @@ def xmatch_checkplot1(ra1, dec1,
     labels2 = ax3.get_xticks()
     ax3.set_xticklabels(labels2, rotation=270)
 
-
     ax4 = plt.subplot(gs[1])
     x0 = 0.0
     fontsize = 'small'
@@ -243,7 +258,6 @@ def xmatch_checkplot1(ra1, dec1,
     ax4.annotate("No. of sources(2): " +
                  str(len(ra2)),
                  xy=(x0, 0.10), size=fontsize)
-
 
     ax4.annotate("Median dRA: {0:.4f}".format(ra_med) +
                  '"', xy=(x0, 0.90), size=fontsize)
@@ -265,6 +279,7 @@ def xmatch_checkplot1(ra1, dec1,
     ax4.axis('off')
     ax4.set_axis_off()
 
+
     if saveplot:
         lineno = str(inspect.stack()[0][2])
         #print(mk_timestamp(), function_name, lineno)
@@ -278,14 +293,32 @@ def xmatch_checkplot1(ra1, dec1,
         if plotfile is None:
             plotfile = 'match'
         if plotfile_prefix is not None and plotfile is None:
-            plotfile = plotfile_prefix + '_match_' + datestamp + '.png'
+            plotfile = plotfile_prefix + '_xmatch_' + datestamp + '.png'
         if plotfile_prefix is None and plotfile is None:
-            plotfile = 'match_' + datestamp + '.png'
+            plotfile = 'xmatch_' + datestamp + '.png'
+
+        # Add footnote; bbox is a dictionary
+        footnote = timestamp + ': ' + \
+        os.path.basename(__file__) + ': ' + plotfile
+        plt.figtext(0.01, 0.01, footnote,
+                    ha="left", fontsize=8,
+                    bbox={"facecolor":'none', 'edgecolor':'none',
+                          "alpha":0.5, "pad":2})
 
         print('Saving: ', plotfile)
         plt.savefig(plotfile)
 
-    if showplot:
+
+    if showplots:
+        if not saveplot:
+            footnote = timestamp + ': ' + \
+                os.path.basename(__file__)
+            plt.figtext(0.01, 0.01, footnote,
+                        ha="left", fontsize=8,
+                        bbox={"facecolor":'none',
+                              "edgecolor":'none',
+                              "alpha":0.5, "pad":2})
         plt.show()
+
 
     return ra_med, dec_med
