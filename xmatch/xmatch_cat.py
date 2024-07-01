@@ -4,15 +4,15 @@ def xmatch_cat(ra1=None, dec1=None,
                ra2=None, dec2=None,
                table1=None, table2=None,
                radec1=None, radec2=None,
-               nthneighbor=None,
-               multimatch=False,
-               seplimit=10.0,
-               selfmatch=False,
                colnames_radec1=['ra', 'dec'],
                colnames_radec2=['ra', 'dec'],
                units_radec1=['degree', 'degree'],
                units_radec2=['degree', 'degree'],
-               stats=False,
+               nthneighbor=None,
+               multimatch=False,
+               seplimit=10.0,
+               selfmatch=False,
+               stats=True,
                debug=False,
                verbose=False,
                method=False):
@@ -128,15 +128,25 @@ def xmatch_cat(ra1=None, dec1=None,
 
     print('units_radec1:', units_radec1)
     print('units_radec2:', units_radec2)
-    print('ra1.units:', ra1.unit)
-    print('dec1.units:', dec1.unit)
-    print('ra2.units:', ra2.unit)
-    print('dec2.units:', dec2.unit)
-    ra2.unit = ra1.unit
-    dec2.unit = dec1.unit
+
+    if ra1.unit is None:
+        ra1.unit = units_radec1[0]
+    if dec1.unit is None:
+        dec1.unit = units_radec1[1]
+
+    if ra2.unit is None:
+        ra2.unit = units_radec2[0]
+    if dec1.unit is None:
+        dec2.unit = units_radec2[1]
+
+    print('ra1.unit:', ra1.unit)
+    print('dec1.unit:', dec1.unit)
+    print('ra2.unit:', ra2.unit)
+    print('dec2.unit:', dec2.unit)
 
     if verbose or debug:
         print('Convert to SkyCoord', len(ra1), len(ra2))
+
     skycoord1 = SkyCoord(ra1, dec1, unit=units_radec1, frame='icrs')
     skycoord2 = SkyCoord(ra2, dec2, unit=units_radec2, frame='icrs')
 
@@ -202,11 +212,15 @@ def xmatch_cat(ra1=None, dec1=None,
         print('seplimit:', seplimit)
         print('len(table1):', len(table1))
         print('len(table2):', len(table2))
+        print()
+
         print('len(idx1):', len(idx1))
         print('len(idx2):', len(idx2))
         print('idxmatch range:', np.min(idx2), np.max(idx2))
-        print('d2d range:', np.min(d2d), np.max(d2d))
-        print('d2d range:', np.min(d2d).arcsec, np.max(d2d).arcsec)
+        print()
+
+        print('d2d min, max:', np.min(d2d), np.max(d2d))
+        print('d2d min, max (arcsec):', np.min(d2d).arcsec, np.max(d2d).arcsec)
         print('d2d median:', np.median(d2d).arcsec)
 
         median_separation = np.median(separation).arcsec

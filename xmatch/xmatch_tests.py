@@ -529,7 +529,8 @@ if __name__ == '__main__':
         dec2 = table1[colnames2_radec[1]][idx2]
 
     checkplot_width = 3600.0
-    xmatch_checkplot1(ra1, dec1, ra2, dec2,
+    xmatch_checkplot1(ra1=ra1, dec1=dec1,
+                      ra2=ra2, dec2=dec2,
                      figsize = (6.0, 6.0),
                      width=checkplot_width,
                      gtype="all",

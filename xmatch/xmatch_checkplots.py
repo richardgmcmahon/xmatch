@@ -1,4 +1,5 @@
-def xmatch_checkplots(ra1=None, dec1=None,
+def xmatch_checkplots(dr=None, dra=None, ddec=None,
+                      ra1=None, dec1=None,
                       ra2=None, dec2=None,
                       table1=None,
                       table2=None,
@@ -17,6 +18,7 @@ def xmatch_checkplots(ra1=None, dec1=None,
                       saveplot=True,
                       datestamp=False,
                       hexbin=False,
+                      githash=False,
                       debug=False,
                       verbose=False):
     """ RA, Dec crossmatch validation plots based on code from Chris Desira and
@@ -70,6 +72,8 @@ Parameters
     from xmatch import xmatch_checkplot1
     from xmatch import xmatch_checkplot2
 
+    from rgm_util import get_githash
+
     now = time.localtime(time.time())
     datestamp = time.strftime("%Y%m%d", now)
     timestamp = time.strftime('%Y-%m-%dT%H:%M:%S', time.gmtime())
@@ -81,15 +85,16 @@ Parameters
     print(function_name + '.prefix:  ', plotfile_prefix)
     print(function_name + '.suffix:  ', plotfile_suffix)
 
-    if ra1 is None:
-        ra1 = table1[colnames_radec1[0]]
-    if dec1 is None:
-        dec1 = table1[colnames_radec1[1]]
+    if dr is None:
+        if ra1 is None:
+            ra1 = table1[colnames_radec1[0]]
+        if dec1 is None:
+            dec1 = table1[colnames_radec1[1]]
 
-    if ra2 is None:
-        ra2 = table2[colnames_radec2[0]]
-    if dec2 is None:
-        dec2 = table2[colnames_radec2[1]]
+        if ra2 is None:
+            ra2 = table2[colnames_radec2[0]]
+        if dec2 is None:
+            dec2 = table2[colnames_radec2[1]]
 
     if plotfile_label is None:
         plotfile_label = ''
@@ -102,7 +107,7 @@ Parameters
     plotfile = plotfile_prefix + 'xmatch_checkplot_1.png'
 
     if plotfile_suffix is not None:
-        plotfile = plotfile_prefix + 'xmatch_checkplot_1_' + /
+        plotfile = plotfile_prefix + 'xmatch_checkplot_1' + \
          plotfile_suffix + '.png'
 
 
@@ -110,8 +115,9 @@ Parameters
     title = plotfile_prefix
     suptitle = plotfile_prefix
     xmatch_checkplot1(
-        ra1, dec1,
-        ra2, dec2,
+        dr=dr, dra=dra, ddec=ddec,
+        ra1=ra1, dec1=dec1,
+        ra2=ra2, dec2=dec2,
         width=rmax,
         hexbin=hexbin,
         gtype='square',
@@ -119,25 +125,29 @@ Parameters
         plotfile=plotfile,
         title=title,
         suptitle=suptitle,
-        showplots=showplots)
+        showplots=showplots,
+        githash=githash)
 
 
     plotfile = (plotfile_prefix + 'xmatch_checkplot_2.png')
     if plotfile_suffix is not None:
-        plotfile = plotfile_prefix + 'xmatch_checkplot_2_' + /
+        plotfile = plotfile_prefix + 'xmatch_checkplot_2' + \
          plotfile_suffix + '.png'
 
 
     # forked from Chris Desira
-    xmatch_checkplot2(ra1, dec1,
-                      ra2, dec2,
-                      hexbin=hexbin,
-                      width=rmax,
-                      binsize=rmax/100,
-                      gtype='square',
-                      saveplot=True,
-                      plotfile=plotfile,
-                      suptitle=suptitle,
-                      showplots=showplots)
+    xmatch_checkplot2(
+        dr=dr, dra=dra, ddec=ddec,
+        ra1=ra1, dec1=dec1,
+        ra2=ra2, dec2=dec2,
+        hexbin=hexbin,
+        width=rmax,
+        binsize=rmax/100,
+        gtype='square',
+        saveplot=True,
+        plotfile=plotfile,
+        suptitle=suptitle,
+        showplots=showplots,
+        githash=githash)
 
     return

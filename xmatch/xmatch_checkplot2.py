@@ -1,16 +1,18 @@
-def xmatch_checkplot2(ra1, dec1,
-                      ra2, dec2,
-                      units_radec1=['degree', 'degree'],
-                      units_radec2=['degree', 'degree'],
-                      width=10.0,
-                      binsize=0.1,
-                      markersize=2.0,
-                      showplots=True,
-                      saveplot=True,
-                      plotfile='',
-                      plotfile_prefix=None,
-                      suptitle=None,
-                      **kwargs):
+def xmatch_checkplot2(
+        dr=None, dra=None, ddec=None,
+        ra1=None, dec1=None,
+        ra2=None, dec2=None,
+        units_radec1=['degree', 'degree'],
+        units_radec2=['degree', 'degree'],
+        width=10.0,
+        binsize=0.1,
+        markersize=2.0,
+        showplots=True,
+        saveplot=True,
+        plotfile='',
+        plotfile_prefix=None,
+        suptitle=None,
+        **kwargs):
 
     """
     only use suptitle since title near start

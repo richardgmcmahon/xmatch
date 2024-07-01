@@ -11,24 +11,28 @@ from astropy import units as u
 from astropy.coordinates import SkyCoord
 from astropy.stats import mad_std
 
+from rgm_util import get_githash
 
-def xmatch_checkplot1(ra1, dec1,
-                      ra2, dec2,
-                      units_radec1=['degree', 'degree'],
-                      units_radec2=['degree', 'degree'],
-                      figsize=(7.0, 7.0),
-                      hexbin=False,
-                      logfrequency=False,
-                      width=10.0,
-                      gtype="all",
-                      add_plotid=False,
-                      prefix=None,
-                      saveplot=True,
-                      showplots=True,
-                      title=None,
-                      suptitle=None,
-                      plotfile=None,
-                      plotfile_prefix=None):
+def xmatch_checkplot1(
+        dr=None, dra=None, ddec=None,
+        ra1=None, dec1=None,
+        ra2=None, dec2=None,
+        units_radec1=['degree', 'degree'],
+        units_radec2=['degree', 'degree'],
+        figsize=(7.0, 7.0),
+        hexbin=False,
+        logfrequency=False,
+        width=10.0,
+        gtype="all",
+        add_plotid=False,
+        prefix=None,
+        saveplot=True,
+        showplots=True,
+        title=None,
+        suptitle=None,
+        plotfile=None,
+        plotfile_prefix=None,
+        githash=False):
 
     """ Makes checkplot for catalogue xmatch results
 
@@ -72,41 +76,120 @@ def xmatch_checkplot1(ra1, dec1,
     print(function_name + '.plotfile:', plotfile)
     print(function_name + '.prefix:  ', plotfile_prefix)
 
-    print(len(ra1), len(ra2))
+    if ra1 is not None and ra1.unit is None:
+        ra1 = ra1 * u.deg
+        print('len(ra1):', len(ra1), ra1.unit)
+    if dec1 is not None and dec1.unit is None:
+        dec1 = dec1 * u.deg
+        print('len(dec1):', len(dec1), dec1.unit)
+
+    if ra2 is not None and ra2.unit is None:
+        ra2 = ra2 * u.deg
+        print('len(ra2):', len(ra2), ra2.unit)
+    if dec2 is not None and dec2.unit is None:
+        dec2 = dec2 * u.deg
+        print('len(dec2):', len(dec2), dec2.unit)
+
+    if dra is not None:
+        dra = dra * u.deg
+        print('len(dra):',len(dra), dra.unit)
+    if ddec is not None:
+        ddec = ddec * u.deg
+        print('len(ddec):', len(ddec), ddec.unit)
+    if dr is not None:
+        dr = dr * u.deg
+        print('len(dr):',len(dr), dr.unit)
 
     print('Plot width:', width)
-    ndata = len(ra1)
+    print()
+
+    if ra1 is not None and ra2 is not None:
+        # compute Delta RA and Delta Dec in arcsecs
+        # ra, dec assumed in have astropy units of degrees
+        skycoord1 = SkyCoord(ra1, dec1, unit=units_radec1)
+        skycoord2 = SkyCoord(ra2, dec2, unit=units_radec2)
+        print(f'skycoord1[0]: skycoord1[0]', len(skycoord1))
+        print(f'skycoord2[0]: skycoord2[0]', len(skycoord2))
+
+        dra, ddec = skycoord1.spherical_offsets_to(skycoord2)
+        dr = skycoord1.separation(skycoord2)
+
+        print()
+        print('dRA range:', np.min(dra), np.max(dra))
+        print('dDec range:', np.min(ddec), np.max(ddec))
+        print('dR range:', np.min(dr), np.max(dr))
+
+        # convert to arcsecs
+        print('convert to arcsec')
+        dra = dra.arcsec
+        ddec = ddec.arcsec
+        dr = dr.arcsec
+
+        print()
+        print('dRA range:', np.min(dra), np.max(dra))
+        print('dDec range:', np.min(ddec), np.max(ddec))
+        print('dR range:', np.min(dr), np.max(dr))
+
+    #width = width * u.arcsec
+    ndata = len(dr)
     rmax = width
-
-    # compute Delta RA and Delta Dec in arcsecs
-    # ra, dec assumed in have astropy units of degrees
-    skycoord1 = SkyCoord(ra1, dec1, unit=units_radec1)
-    skycoord2 = SkyCoord(ra2, dec2, unit=units_radec2)
-    print(skycoord1[0])
-    print(skycoord2[0])
-
-    dra, ddec = skycoord1.spherical_offsets_to(skycoord2)
-    dr = skycoord1.separation(skycoord2)
-
     print(len(dra))
-    print(dra[0])
-    print(ddec[0])
 
     # convert offsets to arc seconds
-    print('dra.unit:', dra.unit)
-    print('ddec.unit:', ddec.unit)
-    print('dr.unit:', dr.unit)
+    #print()
+    #print('dra.unit:', dra.unit)
+    #print('ddec.unit:', ddec.unit)
+    #print('dr.unit:', dr.unit)
+    #print('rmax.unit:', rmax.unit)
+    #print('width.unit:', width.unit)
 
-    dra = dra.arcsecond
-    ddec = ddec.arcsecond
-    dr = dr.arcsecond
+    # convert to arcsecs
+    #try:
+    #    dra = dra.arcsecond
+    #except:
+    #    dra = dra.to(u.arcsec)
 
+    #try:
+    #    ddec = ddec.arcsec
+    #except:
+    #    ddec = ddec.to(u.arcsec)
+
+    #try:
+    #    dr = dr.arcsec
+    #except:
+    #    dr = dr.to(u.arcsec)
+
+    #try:
+    #    rmax = rmax.arcsec
+    #except:
+    #    rmax = rmax.to(u.arcsec)
+
+    #try:
+    #    width = width.arcsec
+    #except:
+    #    width= width.to(u.arcsec)
+
+    #print()
+    #print('dra.unit:', dra.unit)
+    #print('ddec.unit:', ddec.unit)
+    #print('dr.unit:', dr.unit)
+    #print('rmax.unit:', rmax.unit)
+    #print('width.unit:', width.unit)
+
+
+    print()
     print('dRA range:', np.min(dra), np.max(dra))
     print('dDec range:', np.min(ddec), np.max(ddec))
     print('dR range:', np.min(dr), np.max(dr))
 
     # radial cicular limits and square RA, Dec limits
-    itest_dr = np.where(dr < rmax)
+    print('rmax:', rmax)
+    print('width:', width)
+    print()
+    #print('rmax.unit:', rmax.unit)
+    #print('dr.unit:', dr.unit)
+    itest_dr = dr < rmax
+    # itest_dr = np.where(dr < rmax)
     itest_dradec = ((dra > -1.0 * width) &
                     (dra < width) &
                     (ddec > -1.0 * width) &
@@ -181,6 +264,7 @@ def xmatch_checkplot1(ra1, dec1,
     gs = gridspec.GridSpec(2, 2,
                            hspace=0.05, wspace=0.05,
                            width_ratios=[2, 1], height_ratios=[1, 2])
+
     fig = plt.figure(figsize=figsize)
 
     # Delta RA Histogram
@@ -304,6 +388,28 @@ def xmatch_checkplot1(ra1, dec1,
                     ha="left", fontsize=8,
                     bbox={"facecolor":'none', 'edgecolor':'none',
                           "alpha":0.5, "pad":2})
+
+
+        if githash:
+            git_hash = get_githash()
+            text = git_hash
+            xtext = 0.01
+            ytext = 0.97
+            transform = plt.gcf().transFigure
+            color = 'b'
+            fontsize = 8
+            plt.figtext(xtext, ytext,
+                        text,
+                        transform=transform,
+                        rotation=90.0,
+                        color=color,
+                        backgroundcolor='w',
+                        fontsize=fontsize,
+                        weight='ultralight',
+                        horizontalalignment='left',
+                        verticalalignment='bottom')
+
+
 
         print('Saving: ', plotfile)
         plt.savefig(plotfile)
