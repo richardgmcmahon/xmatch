@@ -17,10 +17,16 @@ def xmatch_selfcheck(data=None,
 
     See also /home/rgm/soft/gaia/check_matching.py
 
+    returns idx
+
     """
 
+    import logging
+    import sys
     import time
+
     import numpy as np
+
 
     import matplotlib.pyplot as plt
 
@@ -43,8 +49,16 @@ def xmatch_selfcheck(data=None,
     print('__file__', __file__)
     print('__name__', __name__)
 
+    try:
+        logger = logging.getLogger(__name__)
+        logger.info('')
+    except:
+        pass
+
     print('colnames_radec:', colnames_radec)
     print('markersize:', markersize)
+
+    data.info(['attributes', 'stats'])
 
     t0 = time.time()
 
@@ -115,7 +129,9 @@ def xmatch_selfcheck(data=None,
         bins = int(upperlimit2/0.5)
     if binsize is not None:
         bins = int(rmax/binsize) + 1
+    bins = max(bins, 10)
     print('bins:', bins)
+
     hist_range = [0.0, upperlimit2]
     print('hist_range:', hist_range)
     itest = (separations_orig < rmax)
@@ -189,4 +205,4 @@ def xmatch_selfcheck(data=None,
 
     plt.close()
 
-    return idx
+    return idx, d2d

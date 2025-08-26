@@ -10,15 +10,18 @@ def xmatch_cat(ra1=None, dec1=None,
                units_radec2=['degree', 'degree'],
                nthneighbor=None,
                multimatch=False,
-               seplimit=10.0,
+               xmatch_background_radius_limits=(5.0,10.0),
+               seplimit=1.0,
                selfmatch=False,
-               stats=True,
+               infostats=False,
+               stats=False,
                debug=False,
                verbose=False,
                method=False):
-    """RA, Dec nearest xmatch for two lists; returns pointers
+    """RA, Dec nearest neighbour match or
+    all xmatch for two lists or self-match for a single table
 
-    returns
+    returns pointers
 
     if not multimatch:
         return idx2, dr, dra, ddec
@@ -49,12 +52,15 @@ def xmatch_cat(ra1=None, dec1=None,
     Known issues:
     Some table will have wrong units e.g. None or radians instead of radian
 
+    it is annoying that the software cannot handle radians and requires radian
+
     To change try something like:
     table[colname_RA].unit = 'radian'
     table[colname_Dec].unit = 'radian'
 
 
     """
+    import logging
 
     import numpy as np
     import matplotlib.pyplot as plt
@@ -65,6 +71,12 @@ def xmatch_cat(ra1=None, dec1=None,
     from astropy import units as u
 
     from astropy.stats import mad_std, median_absolute_deviation
+
+    logger = logging.getLogger()
+    try:
+        logging.info('\n')
+    except:
+        pass
 
     if verbose or debug:
         print('__file__:', __file__)
@@ -126,8 +138,9 @@ def xmatch_cat(ra1=None, dec1=None,
         print('RA2 range:', np.min(ra2), np.max(ra2))
         print('Dec2 range:', np.min(dec2), np.max(dec2))
 
-    print('units_radec1:', units_radec1)
-    print('units_radec2:', units_radec2)
+    if stats or verbose or debug:
+        print('units_radec1:', units_radec1)
+        print('units_radec2:', units_radec2)
 
     if ra1.unit is None:
         ra1.unit = units_radec1[0]
@@ -139,10 +152,11 @@ def xmatch_cat(ra1=None, dec1=None,
     if dec1.unit is None:
         dec2.unit = units_radec2[1]
 
-    print('ra1.unit:', ra1.unit)
-    print('dec1.unit:', dec1.unit)
-    print('ra2.unit:', ra2.unit)
-    print('dec2.unit:', dec2.unit)
+    if verbose or debug:
+        print('ra1.unit:', ra1.unit)
+        print('dec1.unit:', dec1.unit)
+        print('ra2.unit:', ra2.unit)
+        print('dec2.unit:', dec2.unit)
 
     if verbose or debug:
         print('Convert to SkyCoord', len(ra1), len(ra2))
@@ -218,6 +232,7 @@ def xmatch_cat(ra1=None, dec1=None,
         print('len(idx2):', len(idx2))
         print('idxmatch range:', np.min(idx2), np.max(idx2))
         print()
+
 
         print('d2d min, max:', np.min(d2d), np.max(d2d))
         print('d2d min, max (arcsec):', np.min(d2d).arcsec, np.max(d2d).arcsec)

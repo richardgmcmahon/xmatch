@@ -7,14 +7,16 @@ def xmatch_checkplots(dr=None, dra=None, ddec=None,
                       colnames_radec2=['ra', 'dec'],
                       units_radec1=['degree', 'degree'],
                       units_radec2=['degree', 'degree'],
+                      idx1=None,
+                      idx2=None,
                       rmax=10.0,
                       rmax2=None,
+                      title=None,
+                      suptitle=None,
                       plotfile_label=None,
                       plotfile_prefix=None,
                       plotfile_suffix=None,
-                      suptitle=None,
-                      title=None,
-                      showplots=True,
+                      showplot=True,
                       saveplot=True,
                       datestamp=False,
                       hexbin=False,
@@ -29,7 +31,7 @@ def xmatch_checkplots(dr=None, dra=None, ddec=None,
     which is based on: https://numpydoc.readthedocs.io/en/latest/format.html
 
 
-Parameters
+    Parameters
     ----------
     ra1: real
         Right Ascension or Longitude in degrees for catalogue or table #1
@@ -68,18 +70,37 @@ Parameters
     import sys
     import time
     import inspect
+    import logging
 
     from xmatch import xmatch_checkplot1
     from xmatch import xmatch_checkplot2
 
     from rgm_util import get_githash
 
+    logger = logging.getLogger()
+    try:
+        logging.info('\n')
+        logging.info(f'suptitle: {suptitle}')
+    except:
+        pass
+
+    if idx1 is not None:
+        print('Number of unique values in idx1:', len(np.unique(idx1)))
+
+    if idx2 is not None:
+        print('Number of unique values in idx1:', len(np.unique(idx1)))
+
+    if suptitle is None:
+        suptitle = plotfile_suffix
+
+
     now = time.localtime(time.time())
     datestamp = time.strftime("%Y%m%d", now)
     timestamp = time.strftime('%Y-%m-%dT%H:%M:%S', time.gmtime())
-    function_name = inspect.stack()[0][3]
 
+    function_name = inspect.stack()[0][3]
     lineno = str(inspect.stack()[0][2])
+
     print(timestamp, function_name, lineno + ':')
     print(function_name + '.saveplot:', saveplot)
     print(function_name + '.prefix:  ', plotfile_prefix)
@@ -113,7 +134,6 @@ Parameters
 
     # forked from Sophie Reed
     title = plotfile_prefix
-    suptitle = plotfile_prefix
     xmatch_checkplot1(
         dr=dr, dra=dra, ddec=ddec,
         ra1=ra1, dec1=dec1,
@@ -125,7 +145,7 @@ Parameters
         plotfile=plotfile,
         title=title,
         suptitle=suptitle,
-        showplots=showplots,
+        showplot=showplot,
         githash=githash)
 
 
@@ -147,7 +167,7 @@ Parameters
         saveplot=True,
         plotfile=plotfile,
         suptitle=suptitle,
-        showplots=showplots,
+        showplot=showplot,
         githash=githash)
 
     return

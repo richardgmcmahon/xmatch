@@ -27,7 +27,7 @@ from astropy import units as u
 
 # private functions
 HOME = os.getenv("HOME")
-sys.path.append(HOME + '/soft/python/lib/librgm/')
+#sys.path.append(HOME + '/soft/python/lib/librgm/')
 print('HOME:', HOME)
 try:
     from plotid import plotid
@@ -46,7 +46,8 @@ from xmatch import xmatch_checkplot1
 from xmatch import xmatch_checkplot2
 from xmatch import xmatch_checkplots
 
-from LineInfo import *
+from lineInfo import *
+
 
 def mk_data(ndata=10000, savefig=True,
             rarange=None, decrange=None,
@@ -130,12 +131,12 @@ def mk_data(ndata=10000, savefig=True,
         plt.grid()
 
         try:
-            plotid()
+             plotid()
         except:
             print('plotid not loaded')
 
         print()
-        print_LineInfo(debug=True)
+        lineInfo(debug=True)
         if savefig:
             plotfile = 'xmatch_tests_radec.png'
             print('Saving:', plotfile)
@@ -248,79 +249,66 @@ def getargs():
     return args
 
 
-
-if __name__ == '__main__':
+def mk_logger(prefix=None):
     """
 
 
     """
 
-    import xmatch
+    import getpass
 
-    t0 = time.time()
+    username = getpass.getuser()
 
-    print()
-    print_LineInfo(debug=True)
+    logging.getLogger(__name__)
 
-    args = getargs()
+    logger_timestamp = time.strftime('%Y%m%dT%H%M', time.gmtime())
 
-    showplot = True
-    noshowplot = args.noshowplot
-    print('showplot:', showplot)
-    if noshowplot:
-        showplot = False
+    if prefix is None:
+        prefix = ''
+    # set up file and screen logging
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s.%(msecs)03d %(name)-12s %(module)s %(funcName)s %(lineno)d %(levelname)-8s %(message)s',
+        datefmt='%y-%m-%dT%H:%M:%S',
+        filename=prefix + logger_timestamp + '.log',
+        filemode='w')
 
-    debug = args.debug
+    # define a Handler which writes INFO messages or higher to sys.stderr
+    console = logging.StreamHandler()
+    console.setLevel(logging.INFO)
+    # set a format which is simpler for console use
+    formatter = logging.Formatter(
+        '%(asctime)s.%(msecs)03d %(name)-12s: %(module)s %(funcName)s %(lineno)s %(levelname)-8s %(message)s',
+        datefmt='%y-%m-%dT%H:%M:%S')
+    # tell the handler to use this format
+    console.setFormatter(formatter)
 
-    if args.verbose or args.debug:
-            help(xmatch)
-    if args.debug:
-        print('__file__:', __file__)
-        help(xmatch_cat)
+    # add the handler to the root logger
+    logging.getLogger().addHandler(console)
 
-    multimatch = args.multimatch
-    seplimit = args.seplimit
-    method = args.method
+    logging.info('Username: ' + username)
+    logging.info(__name__)
+    logging.info(__file__)
 
-    savefig = True
+    logger  = logging
 
-    # create the two lists; default is two lists with the same length
-    ndata1 = args.n1
-    ndata2 = args.n2
-    if ndata2 == 0:
-        ndata2 = ndata1
-
-    table1 = mk_data(ndata=ndata1, savefig=True, showplot=showplot)
-    colnames1_radec = ['ra', 'dec']
-    print('Table 1 RA units:', colnames1_radec[0],
-          table1[colnames1_radec[0]].unit)
-    print('Table 1 Dec units:', colnames1_radec[1],
-          table1[colnames1_radec[1]].unit)
-
-    table0 = Table()
-    nrows = 10
-    table0['MyId'] = np.linspace(1, nrows, nrows, dtype=int)
-    table0['RA'] = [99.9]
-    print("table0['RA'].unit:", table0['RA'].unit)
-    if table0['RA'].unit is None:
-        table0['RA'].unit = 'deg'
-        print("table0['RA'].unit:", table0['RA'].unit)
+    return logger
 
 
-    table2 = mk_data(ndata=ndata2, savefig=True, plots=False)
-    colnames2_radec = ['ra', 'dec']
-    print('Input data created:', len(table1), len(table2))
-    print("Elapsed time %.3f seconds" % (time.time() - t0))
+def explore_table_radec(table=None):
+    """RA, Dec nearest xmatch for two tables; returns pointers
 
-
-    """RA, Dec nearest xmatch for two lists; returns pointers """
+    """
     print('table1 selfxmatch')
     t0 = time.time()
+    logger.info('')
+    print('Selfmatch for table1, xmatch_cat:', len(table1))
+    input('Type any key to continue> ')
     idx, dr, dra, ddec = xmatch_cat(table1=table1,
                                     selfmatch=True,
                                     stats=True,
                                     debug=False,
-                                    verbose=True)
+                                    verbose=False)
     print("Elapsed time %.3f seconds" % (time.time() - t0))
     if args.debug:
         input('Type any key to continue> ')
@@ -388,7 +376,7 @@ if __name__ == '__main__':
         pass
 
     print()
-    print_LineInfo(debug=True)
+    lineInfo(debug=True)
     if savefig:
         plotfile = prefix + '_dr.png'
         print('Saving:', plotfile)
@@ -450,7 +438,7 @@ if __name__ == '__main__':
         pass
 
     print()
-    print_LineInfo(debug=True)
+    lineInfo(debug=True)
     if savefig:
         plotfile = prefix + '_dra_ddec.png'
         print('Saving:', plotfile)
@@ -479,9 +467,83 @@ if __name__ == '__main__':
     print()
     print('selfMatch: table1')
     print('showplot:', showplot)
-    print_LineInfo(debug=True)
+    lineInfo(debug=True)
     idx = xmatch_selfcheck(data=table, rmax=rmax, binsize=binsize,
                            showplot=showplot, debug=debug)
+
+    return
+
+
+if __name__ == '__main__':
+    """
+
+
+    """
+
+    logger = mk_logger()
+
+    logger.info('')
+
+    import xmatch
+
+    pause = True
+    t0 = time.time()
+
+    print()
+    lineInfo(debug=True)
+
+    args = getargs()
+
+    showplot = True
+    noshowplot = args.noshowplot
+    print('showplot:', showplot)
+    if noshowplot:
+        showplot = False
+
+    debug = args.debug
+
+    if args.verbose or args.debug:
+            help(xmatch)
+    if args.debug:
+        print('__file__:', __file__)
+        help(xmatch_cat)
+
+    multimatch = args.multimatch
+    seplimit = args.seplimit
+    method = args.method
+
+    savefig = True
+
+    # create the two RA, Dec tables; default is two tabless with the same length
+    ndata1 = args.n1
+    ndata2 = args.n2
+    if ndata2 == 0:
+        ndata2 = ndata1
+
+    table1 = mk_data(ndata=ndata1, savefig=True, showplot=showplot)
+    colnames_radec1 = ['ra', 'dec']
+    print('Table 1 RA units:', colnames_radec1[0],
+          table1[colnames_radec1[0]].unit)
+    print('Table 1 Dec units:', colnames_radec1[1],
+          table1[colnames_radec1[1]].unit)
+
+    """
+    table0 = Table()
+    nrows = 10
+    table0['MyId'] = np.linspace(1, nrows, nrows, dtype=int)
+    table0['RA'] = [99.9]
+    print("table0['RA'].unit:", table0['RA'].unit)
+    if table0['RA'].unit is None:
+        table0['RA'].unit = 'deg'
+        print("table0['RA'].unit:", table0['RA'].unit)
+    """
+
+    table2 = mk_data(ndata=ndata2, savefig=True, plots=False)
+    colnames_radec2 = ['ra', 'dec']
+    print('Input data created:', len(table1), len(table2))
+    print("Elapsed time %.3f seconds" % (time.time() - t0))
+
+    explore_table_radec(table=table1)
 
 
     # xmatch table1 to table2
@@ -517,18 +579,19 @@ if __name__ == '__main__':
     print("Elapsed time %.3f seconds" % (time.time() - t0))
 
     if not multimatch:
-        ra1 = table1[colnames1_radec[0]]
-        dec1 = table1[colnames1_radec[1]]
-        ra2 = table1[colnames2_radec[0]][idx2]
-        dec2 = table1[colnames2_radec[1]][idx2]
+        ra1 = table1[colnames_radec1[0]]
+        dec1 = table1[colnames_radec1[1]]
+        ra2 = table1[colnames_radec2[0]][idx2]
+        dec2 = table1[colnames_radec2[1]][idx2]
 
     if multimatch:
-        ra1 = table1[colnames1_radec[0]][idx1]
-        dec1 = table1[colnames1_radec[1]][idx1]
-        ra2 = table1[colnames2_radec[0]][idx2]
-        dec2 = table1[colnames2_radec[1]][idx2]
+        ra1 = table1[colnames_radec1[0]][idx1]
+        dec1 = table1[colnames_radec1[1]][idx1]
+        ra2 = table1[colnames_radec2[0]][idx2]
+        dec2 = table1[colnames_radec2[1]][idx2]
 
     checkplot_width = 3600.0
+    print(len(ra1), len(dec1), len(ra2), len(dec2))
     xmatch_checkplot1(ra1=ra1, dec1=dec1,
                       ra2=ra2, dec2=dec2,
                      figsize = (6.0, 6.0),
@@ -543,8 +606,9 @@ if __name__ == '__main__':
                      suptitle="")
 
 
-    xmatch_checkplot2(ra1, dec1,
-                      ra2, dec2,
+    print(len(ra1), len(dec1), len(ra2), len(dec2))
+    xmatch_checkplot2(ra1=ra1, dec1=dec1,
+                      ra2=ra2, dec2=dec2,
                       width=checkplot_width,
                       binsize=0.1,
                       saveplot=True,
@@ -563,19 +627,18 @@ if __name__ == '__main__':
     print('table1:', len(table1))
     print('table1 RA:', np.min(table1[colnames_radec1[0]]),
           np.max(table1[colnames_radec1[0]]))
-    print('table1 Dec:', np.min(table1[colnames_radec[1]]),
-          np.max(table1[colnames_radec[1]]))
+    print('table1 Dec:', np.min(table1[colnames_radec1[1]]),
+          np.max(table1[colnames_radec1[1]]))
 
     print('table2:', len(table2))
     print('table2 RA:', np.min(table2[colnames_radec2[0]]),
           np.max(table1[colnames_radec2[0]]))
     print('table2 Dec:', np.min(table2[colnames_radec2[1]]),
-          np.max(table1[colnames_radec2[1]]))
+          np.max(table2[colnames_radec2[1]]))
 
     xmatch_checkplots(table1=table1,
                       table2=table2,
-                      idxmatch=idx2,
-                      colnames_radec1=['ra', 'dec'],
+                       colnames_radec1=['ra', 'dec'],
                       colnames_radec2=['ra', 'dec'],
                       units_radec1=['degree', 'degree'],
                       units_radec2=['degree', 'degree'],

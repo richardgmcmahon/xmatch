@@ -27,7 +27,7 @@ def xmatch_checkplot1(
         add_plotid=False,
         prefix=None,
         saveplot=True,
-        showplots=True,
+        showplot=True,
         title=None,
         suptitle=None,
         plotfile=None,
@@ -55,6 +55,7 @@ def xmatch_checkplot1(
     import math
     import time
     import inspect
+    import logging
 
     import numpy as np
 
@@ -64,6 +65,13 @@ def xmatch_checkplot1(
 
     # import stats
     # import plotid
+
+    logger = logging.getLogger()
+    try:
+        logging.info('\n')
+        logging.info(f'suptitle: {suptitle}')
+    except:
+        pass
 
     now = time.localtime(time.time())
     datestamp = time.strftime("%Y%m%d", now)
@@ -310,6 +318,11 @@ def xmatch_checkplot1(
     #ax2.set_xticklabels(labels1, rotation=270)
 
     # suptitle covers all all the subplots
+    try:
+        logging.info(f'suptitle: {suptitle}')
+    except:
+        pass
+
     if suptitle is None:
         fig.suptitle("Number of sources in XMatch: " +
                      str(ndata), fontsize='small')
@@ -367,6 +380,11 @@ def xmatch_checkplot1(
     if saveplot:
         lineno = str(inspect.stack()[0][2])
         #print(mk_timestamp(), function_name, lineno)
+        try:
+            logging.info('')
+        except:
+            pass
+
         print('plotfile:', plotfile)
         print('plotfile_prefix:', plotfile_prefix)
         if add_plotid:
@@ -407,15 +425,19 @@ def xmatch_checkplot1(
                         fontsize=fontsize,
                         weight='ultralight',
                         horizontalalignment='left',
-                        verticalalignment='bottom')
+                        verticalalignment='top')
 
 
+        try:
+            logging.info(f'suptitle: {suptitle}')
+        except:
+            pass
 
         print('Saving: ', plotfile)
         plt.savefig(plotfile)
 
 
-    if showplots:
+    if showplot:
         if not saveplot:
             footnote = timestamp + ': ' + \
                 os.path.basename(__file__)

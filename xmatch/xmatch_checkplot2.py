@@ -7,7 +7,7 @@ def xmatch_checkplot2(
         width=10.0,
         binsize=0.1,
         markersize=2.0,
-        showplots=True,
+        showplot=True,
         saveplot=True,
         plotfile='',
         plotfile_prefix=None,
@@ -20,8 +20,10 @@ def xmatch_checkplot2(
 
     """
 
+    import os
     import time
     import inspect
+    import logging
 
     import numpy as np
 
@@ -34,6 +36,20 @@ def xmatch_checkplot2(
     #try:
     #    from mk_timestamp import mk_timestamp
     #from plotid import plotid
+
+
+    logger = logging.getLogger()
+    try:
+        logging.info('\n')
+    except:
+        pass
+
+    try:
+        logging.info(f'plotfile_prefix: {plotfile_prefix}')
+        logging.info(f'plotfile: {plotfile}')
+    except:
+        pass
+
 
 
     now = time.localtime(time.time())
@@ -109,7 +125,7 @@ def xmatch_checkplot2(
 
 
     fig = plt.figure(1, figsize=(10, 5))
-    plt.suptitle(suptitle + ': '+ str(ndata_all))
+    plt.suptitle(suptitle + ': '+ str(ndata_all), fontsize='small')
     ax1=fig.add_subplot(1,2,1)
 
     xdata = dr
@@ -183,7 +199,7 @@ def xmatch_checkplot2(
         path_to_save = str(kwargs['save'])
         plt.savefig(path_to_save, dpi=150)
     else:
-        if showplots:
+        if showplot:
             plt.show()
 
     return
