@@ -2,8 +2,10 @@ from __future__ import (division, print_function)
 
 def xmatch_cat(ra1=None, dec1=None,
                ra2=None, dec2=None,
-               table1=None, table2=None,
-               radec1=None, radec2=None,
+               table1=None,
+               table2=None,
+               radec1=None,
+               radec2=None,
                colnames_radec1=['ra', 'dec'],
                colnames_radec2=['ra', 'dec'],
                units_radec1=['degree', 'degree'],
@@ -131,6 +133,9 @@ def xmatch_cat(ra1=None, dec1=None,
         print('table2: ', colnames_radec2[0], table2[colnames_radec2[0]].unit)
         print('table2: ', colnames_radec2[1], table2[colnames_radec2[1]].unit)
 
+    logging.info(f'shape ra1, dec1: {ra1.shape}, {dec1.shape}')
+    logging.info(f'shape ra2, dec2: {ra1.shape}, {dec1.shape}')
+
     if stats or verbose or debug:
         print('RA1 range:', np.min(ra1), np.max(ra1))
         print('Dec1 range:', np.min(dec1), np.max(dec1))
@@ -163,6 +168,10 @@ def xmatch_cat(ra1=None, dec1=None,
 
     skycoord1 = SkyCoord(ra1, dec1, unit=units_radec1, frame='icrs')
     skycoord2 = SkyCoord(ra2, dec2, unit=units_radec2, frame='icrs')
+
+    if verbose or debug:
+        logging.info(f'skycoord1.shape: {skycoord1.shape}')
+        logging.info(f'skycoord2.shape: {skycoord2.shape}')
 
     # idx is an integer array into the second cordinate array to get the
     # matched points for the second coordindate array.
@@ -209,17 +218,19 @@ def xmatch_cat(ra1=None, dec1=None,
     # compute the separations and
     if verbose or debug:
         print('Compute separations')
+    logging.info(f'multimatch: {multimatch}')
     if not multimatch:
         separation = skycoord1.separation(skycoord2[idx2])
         dra, ddec = \
             skycoord1.spherical_offsets_to(skycoord2[idx2])
-
 
     if multimatch:
         separation = skycoord1[idx1].separation(skycoord2[idx2])
         dra, ddec = \
             skycoord1[idx1].spherical_offsets_to(skycoord2[idx2])
 
+    logging.info(f'shape dra, ddec, dr: ' +
+                 f'{dra.shape}, {ddec.shape}, {separation.shape}')
 
     if stats or verbose or debug:
         print('multimatch:', multimatch)
